@@ -44,17 +44,17 @@ export default async function CommunityDetail({
                   <div className="flex items-center gap-1">
                     <View width={16} height={16} />
                     <p className="text-gray-700 text-xs">
-                      조회 {post.viewCount}
+                      조회 {post.view_count}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
                     <Comment width={16} height={16} />
                     <p className="text-gray-700 text-xs">
-                      댓글 {post.commentNum}
+                      댓글 {post.comment_num}
                     </p>
                   </div>
                   <p className="text-gray-700 text-xs">
-                    {getConvertedTime(post.createdAt)}
+                    {getConvertedTime(post.created_at)}
                   </p>
                   <CommunityActionMenu />
                 </div>
@@ -62,13 +62,13 @@ export default async function CommunityDetail({
             </div>
 
             <div className="px-12 relative mb-24">
-              <CommunityCarousel boardImageList={post.boardImages} />
+              <CommunityCarousel boardImageList={post.board_images} />
               <p>{post.content} </p>
             </div>
 
             <CommnunityComment
               commentList={post.comments}
-              postId={post.boardId}
+              postId={post.board_id}
             />
           </div>
 
