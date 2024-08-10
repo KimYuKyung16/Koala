@@ -38,7 +38,7 @@ public class SentenceController {
 		if (sentenceList == null || sentenceList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} else {
-			return ResponseEntity.status(HttpStatus.OK).body("젠킨스 개가튼거888");
+			return ResponseEntity.status(HttpStatus.OK).body("젠킨스 개가튼거999");
 		}
 	}
 
