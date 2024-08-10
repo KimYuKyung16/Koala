@@ -10,7 +10,7 @@ services:
     volumes:
       - /home/ubuntu/.env:/app/.env
     env_file:
-      - /app/.env
+      - ./backend/koala_back/.env
     environment:
       - TZ=Asia/Seoul
     networks:
