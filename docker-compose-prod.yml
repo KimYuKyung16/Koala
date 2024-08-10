@@ -9,6 +9,8 @@ services:
       - "8080:8080"
     volumes:
       - /home/ubuntu/.env:/app/.env
+    env_file:
+      - /app/.env
     environment:
       - TZ=Asia/Seoul
     networks:
