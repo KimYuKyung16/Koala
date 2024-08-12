@@ -139,7 +139,6 @@ public class SentenceServiceImpl implements SentenceService {
 			} else {
 				if (correctChar == ' ') {
 					// 정답에서는 공백인데 답안이 공백이 아닌 경우
-					//                    result.append("<span class='extra-char'>").append(answerChar).append("</span>");
 					result.append("<span className='text-extra-char'> </span>");
 					correctIndex++;
 				} else if (answerChar == ' ') {
