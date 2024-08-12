@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    env_file:
-      - ./backend/koala_back/.env
     environment:
       - TZ=Asia/Seoul
     networks:
@@ -29,9 +27,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - frontend
-      - backend
     volumes:
       - /home/ubuntu/nginx.conf:/etc/nginx/nginx.conf
       - /home/ubuntu/certbot/conf:/etc/letsencrypt
@@ -48,7 +43,5 @@ services:
 
 networks:
   koala:
-
-
 
 
