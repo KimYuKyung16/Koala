@@ -49,4 +49,8 @@ services:
 networks:
   koala:
 
+volumes:
+  certbot/conf:
+  certbot/www:
+
 
