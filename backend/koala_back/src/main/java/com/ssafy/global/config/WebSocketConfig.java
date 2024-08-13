@@ -28,7 +28,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		// *로 일단 전체 설정해놨음
-		registry.addEndpoint("/ws").setAllowedOriginPatterns("*");
+		registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
 	}
 
 	// STOMP 메시지를 가로채는 인터셉터를 등록: JWT 토큰을 검사하여 사용자의 인증 여부
