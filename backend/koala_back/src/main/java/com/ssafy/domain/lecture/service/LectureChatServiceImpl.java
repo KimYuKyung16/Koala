@@ -24,7 +24,8 @@ public class LectureChatServiceImpl implements LectureChatService {
 				.sender(chat.getSender())
 				.message(chat.getMessage())
 				.sendingTime(LocalDateTime.now())
-				.build());
+				.build()
+		);
 	}
 
 }
