@@ -23,6 +23,8 @@ services:
       - "5000:5000"
     env_file:
       - ./frontend/.env
+    environment:
+      - TZ=Asia/Seoul
     networks:
       - koala
 
