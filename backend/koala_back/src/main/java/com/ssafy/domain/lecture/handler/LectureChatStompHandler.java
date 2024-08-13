@@ -34,12 +34,13 @@ public class LectureChatStompHandler implements ChannelInterceptor {
 			log.info("Bearer token: {}", bearerToken);
 			if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
 				String token = bearerToken.substring(7);
-				log.info("CONNECT attempt with token: {}", bearerToken);
+				log.info("CONNECT attempt with token: {}", token);
 
 				if (!jwtTokenProvider.validateToken(token)) {
 					log.error("Invalid JWT token: {}", token);
 					throw new AccessDeniedException("유효하지 않은 토큰으로 접근이 차단되었습니다.");
 				}
+
 				log.info("Successfully authenticated with token: {}", token);
 				// 만약 jwt에 authentication 객체가 들어있지 않다면!
 				// Member member = userUtilityService.getUserById(id);
