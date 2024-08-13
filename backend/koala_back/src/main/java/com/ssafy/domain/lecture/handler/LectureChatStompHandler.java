@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class LectureChatStompHandler implements ChannelInterceptor {
 	private final JwtTokenProvider jwtTokenProvider;
 
