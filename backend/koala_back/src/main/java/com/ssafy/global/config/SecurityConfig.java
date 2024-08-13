@@ -51,7 +51,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.POST, "/api/users")
 				.permitAll()
 				// WebSocket 연결 경로 허용
-				.requestMatchers("/api/lecture-chat/connections")
+				.requestMatchers("/ws")
 				.permitAll()
 				// 다른 모든 요청은 인증을 필요로 함
 				.anyRequest()
