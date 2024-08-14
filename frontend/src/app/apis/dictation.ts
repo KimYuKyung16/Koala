@@ -1,17 +1,7 @@
 import { ApiError } from '@/app/utils/customError'
 import { getToken } from '@/app/utils/cookie/getToken'
 
-
-export interface SentenceContent {
-  review_sentence_id: number
-  sentence_id: number
-  topic_category: string
-  sentence_text: string
-}
-
-export const getReviewSentence = async (
-  url: string,
-): Promise<any> => {
+export const getDictationSentences = async (url: string): Promise<any> => {
   try {
     const accessToken = await getToken()
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${url}`, {
@@ -21,12 +11,14 @@ export const getReviewSentence = async (
         'Authorization': `Bearer ${accessToken}`,
       },
     })
+
     if (!response.ok) {
       throw new ApiError(
         response.status,
         `Network response was not ok: ${response.status} ${response.statusText}`
       )
     }
+
     const data = await response.json()
     return data
   } catch (error: any) {
@@ -35,59 +27,41 @@ export const getReviewSentence = async (
   }
 }
 
-export const postReviewSentenceSave = async (
+interface DictationGrading {
+  toggled: boolean
+  sentence_id: number
+  user_sentence: string
+}
+
+export const postDictationGrading = async (
   url: string,
-  sentenceId: number,
+  payload: DictationGrading[]
 ): Promise<any> => {
   try {
-    const accessToken = await getToken()
+    const accessToken = getToken()
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${url}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({
-        sentence_id: sentenceId,
-      }),
+      body: JSON.stringify(payload),
     })
-    if (!response.ok) {
-      throw new ApiError(
-        response.status,
-        `Network response was not ok: ${response.status} ${response.statusText}`
-      )
-    }
-  } catch (error: any) {
-    console.error(error)
-    throw error
-  }
-}
 
-export const deleteReviewSentence = async (
-  url: string,
-  reviewSentenceId: number,
-): Promise<any> => {
-  try {
-    const accessToken = await getToken()
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}${url}/${reviewSentenceId}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      }
-    )
     if (!response.ok) {
       throw new ApiError(
         response.status,
         `Network response was not ok: ${response.status} ${response.statusText}`
       )
     }
-    alert('문장을 삭제하였습니다.')
+
+    const data = await response.json()
+    return { data, status: response.status }
   } catch (error: any) {
     console.error(error)
-    throw error
+    return {
+      error,
+      status: error.status,
+    }
   }
 }
