@@ -1,5 +1,7 @@
 package com.ssafy.domain.lecture.handler;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -32,21 +34,23 @@ public class LectureChatStompHandler implements ChannelInterceptor {
 			log.info("Bearer token: {}", bearerToken);
 			if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
 				String token = bearerToken.substring(7);
-				log.info("CONNECT attempt with token: {}", bearerToken);
+				log.info("CONNECT attempt with token: {}", token);
 
 				if (!jwtTokenProvider.validateToken(token)) {
 					log.error("Invalid JWT token: {}", token);
 					throw new AccessDeniedException("유효하지 않은 토큰으로 접근이 차단되었습니다.");
 				}
+
+				log.info("Successfully authenticated with token: {}", token);
 				// 만약 jwt에 authentication 객체가 들어있지 않다면!
 				// Member member = userUtilityService.getUserById(id);
 				// CustomUserDetails userDetails = new CustomUserDetails(member);
 				// UsernamePasswordAuthenticationToken authentication =
 				// 	new UsernamePasswordAuthenticationToken(
 				// 		userDetails, null, userDetails.getAuthorities());
-				Authentication authentication = jwtTokenProvider.getAuthentication(token);
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-				log.info("Successfully authenticated with token: {}", token);
+				// Authentication authentication = jwtTokenProvider.getAuthentication(token);
+				// SecurityContextHolder.getContext().setAuthentication(authentication);
+
 			} else {
 				log.warn("Authorization header is missing or does not start with 'Bearer'");
 				throw new AccessDeniedException("Authorization 헤더가 잘못되었습니다.");
