@@ -3,40 +3,26 @@
 import AuthLayout from '@/app/_components/AuthLayout'
 import Link from 'next/link'
 import Logo from '/public/images/logo.svg'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { postLogin } from '../apis/auth'
-import { useRouter } from 'next/navigation'
-
-interface LoginFormValues {
-  login_id: string
-  password: string
-}
+import { useForm } from 'react-hook-form'
 
 export default function Login() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isValid },
-  } = useForm<LoginFormValues>({ mode: 'onChange' })
-  const router = useRouter()
+  } = useForm({ mode: 'onChange' })
 
-  const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
-    const payload = {
-      login_id: data.login_id,
-      password: data.password,
-    }
-    const res = await postLogin('/users/login', payload)
-    if (res?.status === 200) {
-      alert('로그인이 완료되었습니다!')
-      router.push('/main')
-    } else if (res?.status === 403) {
-      alert('아이디나 비밀번호를 잘못 입력 하셨습니다.')
-    }
+  const onSubmit = (data) => {
+    console.log(
+      'api연결 후 삭제될거지만 필요해서 console찍어놨어요 ㅠ이건 지우면 안되어요...',
+      data
+    )
   }
 
   return (
     <AuthLayout>
-      <div className="relative bg-white w-full max-w-[600px] mx-auto py-10 px-24 flex flex-col items-center rounded-[60px]">
+      <div className="relative bg-white max-w-[600px] mx-auto mt-24 py-10 px-24 flex flex-col items-center rounded-[60px]">
         <h1 className="py-10 flex flex-col items-center text-center">
           <Logo width="210" height="56" />
           <p className="text-primary-400 font-medium">
@@ -51,19 +37,19 @@ export default function Login() {
         >
           <div className="relative">
             <input
-              id="login_id"
-              type="login_id"
+              id="id"
+              type="id"
               placeholder=" "
-              {...register('login_id', {
+              {...register('id', {
                 required: '아이디는 필수입력 필드입니다.',
               })}
               className="input peer"
             />
-            <label htmlFor="login_id" className="input-label">
+            <label htmlFor="id" className="input-label">
               아이디
             </label>
             <p className="error-message">
-              {errors.login_id && String(errors.login_id.message)}
+              {errors.id && String(errors.id.message)}
             </p>
           </div>
           <div className="relative">

@@ -21,20 +21,13 @@ const renderPanel = (activeTab: TabId): React.ReactNode => {
   }
 }
 
-interface OnlineLearningSideBarProps {
-  setIsOpenSideBar: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-export default function OnlineLearningSideBar({
-  setIsOpenSideBar,
-}: OnlineLearningSideBarProps) {
+export default function OnlineLearningSideBar() {
   const [activeTab, setActiveTab] = useState<TabId>('none')
   return (
-    <div className="fixed top-0 z-[60] max-w-md h-screen overflow-clip">
+    <div className="max-w-md h-screen overflow-clip">
       <OnlineLearningTabList
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        setIsOpenSideBar={setIsOpenSideBar}
       />
       <AnimatePresence initial={false} mode={'wait'}>
         {activeTab !== 'none' && (

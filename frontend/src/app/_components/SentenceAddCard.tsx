@@ -1,7 +1,4 @@
-import { postTeacherSentence } from '@/app/apis/online-learning'
 import SentenceAddBtn from '/public/icons/plus-circle.svg'
-import { useParams } from 'next/navigation'
-import { mutate } from 'swr'
 
 interface SentenceAddCardProps {
   sentence: string
@@ -12,16 +9,8 @@ export default function SentenceAddCard({
   sentence,
   sentenceId,
 }: SentenceAddCardProps) {
-  const params = useParams()
-  const { lecture_id } = params
-
-  const handleAddSeuntence = async () => {
-    const res = await postTeacherSentence('/reviews', {
-      sentence_id: sentenceId,
-    })
-    if (res?.status === 201) {
-      mutate(`/lectures/${lecture_id}/sentences`)
-    }
+  const handleAddSeuntence = () => {
+    console.log('문장추가~')
   }
 
   return (
