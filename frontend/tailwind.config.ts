@@ -1,7 +1,6 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
-  mode: 'jit',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,9 +8,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      height: {
-        'main-screen': 'calc(100vh - 5rem)',
-      },
       minHeight: {
         'main-height': 'calc(100vh - 5rem)',
       },

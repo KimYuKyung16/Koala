@@ -13,7 +13,6 @@ import com.ssafy.domain.user.model.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -23,18 +22,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Entity
 @Getter
+@Entity
 @Builder
 @Table(name = "lectures")
-@NoArgsConstructor(access = PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = PROTECTED)
 public class Lecture {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue
 	@Column(name = "lecture_id")
 	private Long lectureId;
 
@@ -48,12 +46,8 @@ public class Lecture {
 	@Column(name = "lecture_detail")
 	private String lectureDetail;
 
-	@Column(name = "lecture_url")
+	@Column(name = "lecture_url", nullable = false)
 	private String lectureUrl;
-
-	@Setter
-	@Column(name = "session_id")
-	private String sessionId;
 
 	@Builder.Default
 	@Column(name = "is_open")

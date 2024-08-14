@@ -1,38 +1,21 @@
+import Header from '@/app/_components/Header'
+import Title from '@/app/_components/Title'
 import ReviewArea from '@/app/review/_components/ReviewArea'
 import ReviewLayout from '@/app/review/_components/ReviewLayout'
-import { getReviewSentence } from '@/app/apis/review'
+import ReviewMenuButtons from '@/app/review/_components/ReviewMenuButtons'
 
-interface ReviewProps {
-  searchParams: {
-    keyword?: string
-    topic?: '일상' | '행정' | '교육' | '사용자'
-  }
-}
-
-export default async function ReviewMain({ searchParams }: ReviewProps) {
-  const topic = searchParams?.topic || null
-  const keyword = searchParams?.keyword || null
-  let url = ''
-
-  if (topic && keyword) {
-    url = `/reviews?keyword=${keyword}&topic=${topic}`
-  } else if (topic) {
-    url = `/reviews?topic=${topic}`
-  } else if (keyword) {
-    url = `/reviews?keyword=${keyword}`
-  } else {
-    url = '/reviews'
-  }
-
-  const sentenceList = await getReviewSentence(url)
-  
+export default function ReviewMain() {
   return (
     <ReviewLayout>
-      <div className="h-main-screen flex flex-col gap-4">
-        <div className="w-[80%] h-full flex max-w-7xl gap-8 mx-auto">
-          <ReviewArea topic={topic} keyword={keyword} sentenceList={sentenceList} url={url}/>
-        </div>
+      <Header />
+      <Title
+        CourseTitle={'복습하기'}
+        CourseDescription={'반복학습으로 실력 Up!'}
+      />
+      <div className="flex mt-5">
+        <ReviewArea />
+        <ReviewMenuButtons />
       </div>
     </ReviewLayout>
   )
-} 
+}

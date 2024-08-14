@@ -1,11 +1,17 @@
 package com.ssafy.domain.lecture.service;
 
 import com.ssafy.domain.lecture.chat.LectureChatRoom;
+import com.ssafy.domain.lecture.chat.LectureChatRoomManager;
 
-public interface LectureChatService {
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-	LectureChatRoom makeLectureChatRoom(Long lectureId);
+import org.springframework.stereotype.Service;
 
-	void deleteLectureChatRoom(Long lectureId);
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class LectureChatService {
 
+	
 }

@@ -6,7 +6,7 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="relative h-main-screen flex justify-center items-center overflow-hidden">
+    <div>
       {children}
       <Image
         src="/images/cloud.svg"
@@ -14,7 +14,7 @@ export default function AuthLayout({
         width={240}
         height={240}
         priority
-        className="absolute bottom-10 left-10 -z-20"
+        className="absolute bottom-10 left-10"
       />
       <Image
         src="/images/cloud.svg"
@@ -43,10 +43,10 @@ export default function AuthLayout({
       <Image
         src="/images/koala-tree.png"
         alt="koala-tree"
-        width={380}
-        height={380}
+        width={460}
+        height={460}
         priority
-        className="absolute bottom-0 translate-y-2 left-40 -z-10"
+        className="absolute bottom-0 translate-y-2 left-28"
       />
     </div>
   )

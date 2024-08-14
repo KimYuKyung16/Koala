@@ -1,7 +1,6 @@
 package com.ssafy.domain.user.controller;
 
-import java.util.Map;
-
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,6 +8,7 @@ import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -20,11 +20,9 @@ import com.ssafy.domain.user.model.dto.request.UserSignUpRequest;
 import com.ssafy.domain.user.model.dto.request.UserUpdateRequest;
 import com.ssafy.domain.user.model.dto.response.UserFindResponse;
 import com.ssafy.domain.user.model.dto.response.UserResponse;
-import com.ssafy.domain.user.service.StudyTimeService;
 import com.ssafy.domain.user.service.UserService;
 import com.ssafy.global.auth.jwt.dto.JwtToken;
 
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,83 +34,78 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
 	private final UserService userService;
-	private final StudyTimeService studyTimeService;
 
-	@Operation(summary = "회원가입")
 	@PostMapping
 	public ResponseEntity<?> signUp(@Valid @RequestBody UserSignUpRequest userSignUpRequest) {
-		UserFindResponse userFindResponse = userService.signUp(userSignUpRequest);
-		return ResponseEntity.status(HttpStatus.CREATED).body(userFindResponse);
+		UserResponse savedUserResponse = userService.signUp(userSignUpRequest);
+		System.out.println(savedUserResponse.getNickname());
+		return ResponseEntity.ok().body(new JSONObject().put("message", "Signup successful").toString());
 	}
 
-	@Operation(summary = "로그인")
 	@PostMapping("/login")
-	public ResponseEntity<?> signIn(@Valid @RequestBody UserSignInRequest userSignInRequest) {
+	public ResponseEntity<JwtToken> signIn(@Valid @RequestBody UserSignInRequest userSignInRequest) {
 		String loginId = userSignInRequest.getLoginId();
 		String password = userSignInRequest.getPassword();
 		JwtToken jwtToken = userService.signIn(loginId, password);
-		return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
+		log.info("request loginId: {}, password: {}", loginId, password);
+		log.info("jwtToken accessToken: {}, refreshToken: {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+		return ResponseEntity.ok().body(jwtToken);
 	}
 
-	@Operation(summary = "로그아웃")
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout() {
+	public ResponseEntity<?> logout(@RequestBody String accessToken) {
 		userService.logout();
-		return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Logout successful!"));
+		return ResponseEntity.ok().body("logout successful");
 	}
 
-	@Operation(summary = "accessToken 재발급")
 	@GetMapping("/refresh")
 	public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") String bearerToken) {
 		try {
-			JwtToken jwtToken = userService.makeNewToken(bearerToken);
+			JwtToken jwtToken = userService.createNewToken(bearerToken);
 			if (jwtToken != null) {
-				return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
+				return ResponseEntity.ok().body(jwtToken);
 			} else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(Map.of("message", "Invalid or expired refresh token"));
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
 			}
 		} catch (UsernameNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found!"));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
 		} catch (InvalidCsrfTokenException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid refresh token!"));
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body(Map.of("message", "An unexpected error occurred"));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
 		}
 	}
 
-	@Operation(summary = "특정 유저 정보 조회")
-	@GetMapping
-	public ResponseEntity<?> getUser() {
-		UserResponse userFindResponse = userService.getUser();
-		return ResponseEntity.status(HttpStatus.OK).body(userFindResponse);
+	@GetMapping("/check/check-id/{loginId}")
+	public ResponseEntity<?> checkLoginId(@PathVariable String loginId) {
+		boolean isExist = userService.checkLoginId(loginId);
+		String message = isExist ? "이미 사용 중인 아이디입니다." : "사용 가능한 아이디입니다.";
+		return ResponseEntity.ok().body(new JSONObject().put("available", !isExist).put("message", message).toString());
 	}
 
-	@Operation(summary = "닉네임 수정")
+	@GetMapping("/check/check-name/{nickname}")
+	public ResponseEntity<?> checkNickname(@PathVariable String nickname) {
+		boolean isExist = userService.checkNickname(nickname);
+		String message = isExist ? "Not Available Nickname" : "Available Nickname";
+		return ResponseEntity.ok().body(new JSONObject().put("available", !isExist).put("message", message).toString());
+	}
+
+	@GetMapping
+	public ResponseEntity<?> getUser() {
+		UserFindResponse userFindResponse = userService.findUser();
+		return ResponseEntity.ok().body(userFindResponse);
+	}
+
 	@PatchMapping
 	public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateRequest userUpdateRequest) {
 		UserResponse userResponse = userService.updateUser(userUpdateRequest);
-		return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Successfully updated user info!"));
+		return ResponseEntity.ok().body(new JSONObject().put("message", "Update successful").toString());
 	}
 
-	@Operation(summary = "회원 탈퇴")
 	@DeleteMapping
 	public ResponseEntity<?> deleteUser() {
 		userService.deleteUser();
-		return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Successfully deleted user!"));
-	}
-
-	@Operation(summary = "랭킹 조회")
-	@GetMapping("/ranking")
-	public ResponseEntity<?> getRanking() {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.getRanking());
-	}
-
-	@Operation(summary = "유저 공부 시간 조회")
-	@GetMapping("/study-time")
-	public ResponseEntity<?> getStudyTime() {
-		return ResponseEntity.status(HttpStatus.OK).body(studyTimeService.getStudyTime());
+		return ResponseEntity.ok().body(new JSONObject().put("message", "Delete successful").toString());
 	}
 
 }
