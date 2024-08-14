@@ -3,7 +3,7 @@
 import { motion, useSpring } from 'framer-motion'
 import React, { useState, useRef, useEffect } from 'react'
 import OnlineLearningLectureCard from '@/app/online-learning/_components/carousel/OnlineLearningLectureCard'
-import { CardDataProps } from '@/app/online-learning/_components/carousel/OnlineLearningLectureCardSlide'
+import { LectureCard } from '@/app/apis/online-learning'
 
 const spring = {
   type: 'spring',
@@ -13,7 +13,7 @@ const spring = {
 
 export default function OnlineLearningLectureCardFlip({
   ...cardData
-}: CardDataProps) {
+}: LectureCard) {
   const [isFlipped, setIsFlipped] = useState(false)
 
   const handleClick = () => {

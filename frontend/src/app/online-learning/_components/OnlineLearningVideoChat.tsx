@@ -1,32 +1,33 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { OpenVidu, Publisher, Session } from 'openvidu-browser'
-import {
-  postCreateOpenViduConnection,
-  postCreateOpenViduSession,
-} from '@/app/apis/online-learning'
 import useSWR from 'swr'
+import { useEffect, useState } from 'react'
+import { OpenVidu, Session } from 'openvidu-browser'
+import { postCreateOpenViduConnection } from '@/app/apis/online-learning'
+import { useParams, useRouter } from 'next/navigation'
 
-export default function OnlineLearningVideoChat({
-  lectureId,
-}: {
-  lectureId: string
-}) {
+export default function OnlineLearningVideoChat() {
+  const params = useParams()
+  const { lecture_id } = params
   const { data: userInfo } = useSWR('/users')
   const [session, setSession] = useState<Session | null>(null)
-  const [publisher, setPublisher] = useState<Publisher | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    console.log('useEffect 계속 작동하는중!!!!!!')
     const initializeSession = async () => {
       if (!userInfo || !userInfo.data) return
 
       try {
-        // await postCreateOpenViduSession(`/lectures/${lectureId}/session`)
         const tokenResponse = await postCreateOpenViduConnection(
-          `/lectures/${lectureId}/connections`
+          `/lectures/${lecture_id}/connections`
         )
+
+        if (tokenResponse?.status === 404) {
+          alert('아직 수업이 열리지 않았습니다.')
+          router.push('/main')
+          return
+        }
+
         const token = tokenResponse?.data
 
         if (!token) {
@@ -50,13 +51,12 @@ export default function OnlineLearningVideoChat({
                 videoSource: true,
                 publishAudio: true,
                 publishVideo: true,
-                resolution: '320x240',
+                resolution: '1280x720',
                 insertMode: 'REPLACE',
                 mirror: true,
               })
 
               session.publish(publisher)
-              setPublisher(publisher)
             }
             setSession(session)
           })
@@ -73,20 +73,17 @@ export default function OnlineLearningVideoChat({
     return () => {
       if (session) {
         session.disconnect()
-        setSession(null)
       }
     }
-  }, [lectureId, userInfo?.data?.nickname])
+  }, [lecture_id, userInfo])
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 h-full">
-      <div className="flex-1 bg-black w-full max-w-[720px] h-[480px] rounded-[3rem] overflow-hidden">
-        {userInfo && userInfo.data.auth_id === 2 ? (
-          <div id="publisher"></div>
-        ) : (
-          <div id="subscriber"></div>
-        )}
-      </div>
+    <div className="bg-black w-full h-full rounded-[3rem] overflow-hidden">
+      {userInfo && userInfo.data.auth_id === 2 ? (
+        <div id="publisher"></div>
+      ) : (
+        <div id="subscriber"></div>
+      )}
     </div>
   )
 }

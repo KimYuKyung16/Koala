@@ -3,17 +3,40 @@
 import Play from '/public/icons/play.svg'
 import Pause from '/public/icons/pause.svg'
 import { useState } from 'react'
+import { SentenceContent } from '@/app/apis/review'
+import { getGoogleSpeech } from '@/app/apis/ttsSententce'
 
-export default function ReviewAreaSentence({ sentence }: any) {
-  const [isSelected, setSelected] = useState<Boolean>(false)
+interface SentenceProps {
+  sentence: SentenceContent
+  isSelected: boolean
+  isNowPlaying: boolean
+  OnSentenceSelect: (sentence_id: number) => void
+}
+
+export default function ReviewAreaSentence({
+  sentence,
+  isSelected,
+  isNowPlaying,
+  OnSentenceSelect,
+}: SentenceProps) {
   const [isPlaying, setPlaying] = useState<Boolean>(false)
+  let source: AudioBufferSourceNode
+  let response: string
 
   const handleChangeSelected = () => {
-    setSelected((isSelected) => !isSelected)
+    OnSentenceSelect(sentence.review_sentence_id)
   }
 
-  const handlePlaying = () => {
-    setPlaying((isPlaying) => !isPlaying)
+  const handlePlaying = async () => {
+    const audioContext = new window.AudioContext()
+    const arraybuff = await getGoogleSpeech(sentence.sentence_text)
+    const audiobuff = await audioContext.decodeAudioData(arraybuff)
+    source = await audioContext.createBufferSource()
+    source.buffer = audiobuff
+    await source.connect(audioContext.destination)
+    source.start()
+    await setPlaying(true)
+    source.onended = () => setPlaying(false)
   }
 
   return (
@@ -27,7 +50,7 @@ export default function ReviewAreaSentence({ sentence }: any) {
         {sentence.sentence_text}
       </p>
       <button onClick={handlePlaying}>
-        {isPlaying ? (
+        {isPlaying || isNowPlaying ? (
           <Pause fill={`${isSelected ? 'white' : ''}`} />
         ) : (
           <Play fill={`${isSelected ? 'white' : ''}`} />
