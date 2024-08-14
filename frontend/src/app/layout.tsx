@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Noto_Sans_KR } from 'next/font/google'
 import './globals.css'
 import { SWRProvider } from './swr-provider'
 import Header from './_components/Header'
 
-const inter = Inter({ subsets: ['latin'] })
+const notoSansKR = Noto_Sans_KR({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -13,15 +13,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode
+  modal: React.ReactNode
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Header />
+      <body className={notoSansKR.className}>
         <SWRProvider>
-          <main>{children}</main>
+          {modal}
+          <Header />
+          <main className="pt-20 min-h-screen">{children}</main>
         </SWRProvider>
       </body>
     </html>
