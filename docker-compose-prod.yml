@@ -25,6 +25,8 @@ services:
       - ./frontend/.env
     environment:
       - TZ=Asia/Seoul
+    volumes:
+      - ./frontend/secret.json:/app/secret.json
     networks:
       - koala
 
