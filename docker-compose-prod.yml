@@ -26,7 +26,7 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - ./frontend/secret.json:/app/secret.json
+      - /var/jenkins_home/workspace/koala/frontend/secret.json:/app/secret.json
     networks:
       - koala
 
