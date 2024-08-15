@@ -29,27 +29,12 @@ public class LectureChatStompHandler implements ChannelInterceptor {
 		// 클라이언트가 WebSocket 연결을 시도할 때만 검증을 수행
 		if (accessor.getCommand() == StompCommand.CONNECT) {
 			String bearerToken = accessor.getFirstNativeHeader("Authorization");
-			log.info("Bearer token: {}", bearerToken);
 			if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
 				String token = bearerToken.substring(7);
-				log.info("CONNECT attempt with token: {}", bearerToken);
-
 				if (!jwtTokenProvider.validateToken(token)) {
-					log.error("Invalid JWT token: {}", token);
 					throw new AccessDeniedException("유효하지 않은 토큰으로 접근이 차단되었습니다.");
 				}
-				log.info("Successfully authenticated with token: {}", token);
-				// 만약 jwt에 authentication 객체가 들어있지 않다면!
-				// Member member = userUtilityService.getUserById(id);
-				// CustomUserDetails userDetails = new CustomUserDetails(member);
-				// UsernamePasswordAuthenticationToken authentication =
-				// 	new UsernamePasswordAuthenticationToken(
-				// 		userDetails, null, userDetails.getAuthorities());
-				// Authentication authentication = jwtTokenProvider.getAuthentication(token);
-				// SecurityContextHolder.getContext().setAuthentication(authentication);
-
 			} else {
-				log.warn("Authorization header is missing or does not start with 'Bearer'");
 				throw new AccessDeniedException("Authorization 헤더가 잘못되었습니다.");
 			}
 		}

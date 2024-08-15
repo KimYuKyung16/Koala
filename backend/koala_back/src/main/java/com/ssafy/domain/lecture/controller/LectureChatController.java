@@ -19,7 +19,6 @@ public class LectureChatController {
 
 	@MessageMapping("/{lecture_id}")
 	public void messageHandler(@DestinationVariable("lecture_id") Long lectureId, LectureChatRequest message) {
-		log.info("강의 채팅 요청:" + message.getSender());
 		lectureChatService.sendLectureChat(lectureId, message);
 	}
 
