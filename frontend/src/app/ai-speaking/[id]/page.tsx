@@ -1,221 +1,176 @@
 'use client'
+
 import ChatBubble from '@/app/_components/ChatBubble'
 import MicBtn from '/public/icons/microphone.svg'
-import SendBtn from '/public/icons/send.svg'
 import Image from 'next/image'
-import { useState } from 'react'
-import AISpeakingBackgroundLayout from '../_components/AISpeakingBackgroundLayout'
+import { useEffect, useRef, useState } from 'react'
+import AISpeakingBackgroundLayout from '@/app/ai-speaking/_components/AISpeakingBackgroundLayout'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import useSWR from 'swr'
+import {
+  getEndAISpeaking,
+  getStartAISpeaking,
+  postSendAISpeakingMessage,
+} from '@/app/apis/ai-speaking'
+import { playTextToSpeech } from '@/app/utils/playTextToSpeech'
+import { useSpeechRecognition } from '@/app/utils/useSpeechRecognition'
+import LoadingDots from '@/app/_components/LoadingDots'
 
-const dummy = [
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
+type TopicKey = '일상' | '행정' | '교육'
+
+const BACKGROUND_DATA: Record<TopicKey, { bgImage: string; avatar: string }> = {
+  일상: {
+    bgImage: '/images/daily-background.jpg',
+    avatar: '/images/koala-front.png',
   },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
+  행정: {
+    bgImage: '/images/administration-background.jpg',
+    avatar: '/images/koala-business.png',
   },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
+  교육: {
+    bgImage: '/images/education-background.jpg',
+    avatar: '/images/koala-study.png',
   },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지dddddddddddddddddddd',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 1,
-    isMine: true,
-    message: '내가보낸 메세지',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-  {
-    id: 2,
-    isMine: false,
-    message: '내가보낸 메세지',
-    senderName: '응 위엔',
-    senderProfile: '/public/images/koala-sleep.png',
-    timeStamp: '2024-07-30T13:45:00+09:00',
-  },
-]
+}
+
+interface AISpeakingMessage {
+  sender: string
+  message: string
+  isMine: boolean
+}
 
 export default function AISpeakingLearningRoom() {
-  const [isSpeakMode, setIsSpeakMode] = useState(true)
+  const [messages, setMessages] = useState<AISpeakingMessage[]>([])
+  const { isRecording, transcription, startRecording, stopRecording } =
+    useSpeechRecognition()
+  const bottomRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const topic = searchParams.get('topic') as TopicKey
+  const params = useParams()
+  const { id } = params
+  const { data: startData } = useSWR(
+    `/ai-talk/start?situation=${id}`,
+    getStartAISpeaking
+  )
+
+  useEffect(() => {
+    if (startData?.data && messages.length === 0) {
+      setMessages([
+        {
+          sender: startData.data.ai_role,
+          message: startData.data.message,
+          isMine: false,
+        },
+      ])
+      playTextToSpeech(startData.data.message)
+    }
+  }, [startData])
+
+  useEffect(() => {
+    if (transcription) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          sender: 'user',
+          message: transcription,
+          isMine: true,
+        },
+      ])
+
+      const sendMessage = async () => {
+        const payload = {
+          situation_id: Number(id),
+          message: transcription,
+        }
+        const res = await postSendAISpeakingMessage('/ai-talk', payload)
+        if (res?.status === 200) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              sender: res.data.ai_role,
+              message: res.data.message,
+              isMine: false,
+            },
+          ])
+          playTextToSpeech(res.data.message)
+        }
+      }
+
+      sendMessage()
+    }
+  }, [transcription])
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  const handleExitConversation = async () => {
+    stopRecording()
+    const res = await getEndAISpeaking('/ai-talk/finish')
+    if (res?.status === 200) {
+      //TODO: router 모달로 유칼립투스 같이 보내기
+      alert(`유칼립투스${res.data.leaves}`)
+      router.push('/main')
+    }
+  }
+
   return (
     <AISpeakingBackgroundLayout>
-      <div className="h-main-screen flex items-center">
-        <div className="h-[90%] w-[80%] max-w-7xl bg-white rounded-3xl mx-auto flex gap-10 p-8">
+      <div className="h-main-screen flex flex-col justify-evenly items-center">
+        <div className="h-[80%] w-[80%] max-w-7xl bg-white rounded-3xl mx-auto flex gap-10 p-8">
           <div className="relative bg-gray-300 rounded-tr-3xl overflow-hidden w-[50%] ">
-            <img
-              src="https://plus.unsplash.com/premium_photo-1680807869780-e0876a6f3cd5?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            <Image
+              src={BACKGROUND_DATA[topic].bgImage}
+              width={500}
+              height={500}
               alt="background"
               className="w-full h-full object-cover blur-sm"
+              priority
             />
             <Image
-              src="/images/koala-front.png"
+              src={BACKGROUND_DATA[topic].avatar}
               alt="koala-front"
               width={300}
               height={300}
-              className="absolute bottom-16 left-16"
+              className="absolute bottom-12 left-36"
             />
           </div>
-          <div className="w-[50%] flex flex-col gap-12 items-center">
-            <div className="w-full overflow-auto pr-3">
-              {dummy.map((chat) => (
+          <div className="w-[50%] flex flex-col gap-12 items-center justify-between">
+            <div className="w-full overflow-auto pr-3 flex-1 flex flex-col gap-4">
+              {messages.map((chat, idx) => (
                 <ChatBubble
-                  key={chat.id}
+                  key={idx}
                   isMine={chat.isMine}
                   message={chat.message}
-                  senderName={chat.senderName}
-                  senderProfile={chat.senderProfile}
-                  timeStamp={chat.timeStamp}
+                  senderName={chat.sender}
+                  senderProfile={BACKGROUND_DATA[topic].avatar}
                 />
               ))}
-            </div>
-            <div className="flex-1 w-full text-center">
-              {isSpeakMode ? (
-                <button>
-                  <MicBtn className="w-16 text-primary-400" />
-                </button>
-              ) : (
-                <div className="flex gap-3">
-                  <input type="text" className="input" />
-                  <button className="w-16 text-white bg-primary-400 rounded-full p-3">
-                    <SendBtn />
-                  </button>
-                </div>
+              {isRecording && (
+                <ChatBubble isMine={true} message={<LoadingDots />} />
               )}
+              <div ref={bottomRef} />
+            </div>
+            <div className="relative w-16 h-16 text-center">
+              {isRecording && (
+                <div className="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-primary-300 opacity-70" />
+              )}
+              <button
+                onClick={isRecording ? stopRecording : startRecording}
+                className="relative rounded-full inline-flex"
+              >
+                <MicBtn className="w-16 text-primary-400 hover:text-primary-600 transition" />
+              </button>
             </div>
           </div>
         </div>
+        <button
+          onClick={handleExitConversation}
+          className="submit-btn bg-red-600 h-12 px-6 py-2 hover:bg-red-700"
+        >
+          대화 종료하기
+        </button>
       </div>
     </AISpeakingBackgroundLayout>
   )
