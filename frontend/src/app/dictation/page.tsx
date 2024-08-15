@@ -41,6 +41,7 @@ export default function Dictation() {
     const queryParams = new URLSearchParams(window.location.search)
     const categoryParam = queryParams.get('category')
     const modeParam = queryParams.get('mode')
+    const reviewDictationQuestion = localStorage.getItem('dictationData')
 
     setMode(modeParam || 'typing')
 
@@ -55,7 +56,12 @@ export default function Dictation() {
       }
     }
 
-    getDictationSentenceList()
+    if (reviewDictationQuestion) {
+      updateSentences(JSON.parse(reviewDictationQuestion))
+      localStorage.removeItem('dictationData')
+    } else {
+      getDictationSentenceList()
+    }
   }, [router])
 
   useEffect(() => {
@@ -63,8 +69,6 @@ export default function Dictation() {
       setToggleFlag(true)
     }
   }, [isToggled])
-
-  useEffect(() => {}, [])
 
   return (
     <DictationLayout>
