@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.domain.lecture.model.dto.response.RegisteredLectureResponse;
 import com.ssafy.domain.lecture.service.LectureService;
 import com.ssafy.global.common.UserInfoProvider;
 
@@ -84,7 +83,6 @@ public class LectureSessionController {
 					session = openvidu.createSession(properties);
 					// 해당 강의에 세션 아이디 추가
 					lectureService.setSessionId(lectureId, session.getSessionId());
-
 				} else {
 					return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Session not found"));
 				}
@@ -93,7 +91,6 @@ public class LectureSessionController {
 			Connection connection = session.createConnection(properties);
 			// 수강하는 강의에 추가: 강의 노트 추가할 때 추가하고 싶으면 lecture controller 이동
 			lectureService.registerLecture(lectureId);
-			// lectureService.registerd
 			return ResponseEntity.status(HttpStatus.CREATED)
 				.body(Map.of("token", connection.getToken(), "lecture_id", lectureId));
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
