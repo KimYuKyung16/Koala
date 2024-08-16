@@ -29,12 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			if (token != null) {
 				jwtTokenProvider.validateToken(token);
 				Authentication authentication = jwtTokenProvider.getAuthentication(token);
-				log.info("Authentication: " + authentication);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 			filterChain.doFilter(request, response);
 		} catch (TokenException e) {
-			log.error("Token Error");
 			response.setStatus(e.getHttpStatus().value());
 			response.setContentType("application/json");
 			response.getWriter().write("{\"message\": \"" + e.getMessage() + "\"}");

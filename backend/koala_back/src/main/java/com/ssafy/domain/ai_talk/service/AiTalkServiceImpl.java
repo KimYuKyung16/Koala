@@ -107,7 +107,6 @@ public class AiTalkServiceImpl implements AiTalkService {
         String loginId = userInfoProvider.getCurrentLoginId();
         // 이전 대화 가져오기
         List<Message> chatHistory = cacheService.getChatHistory(loginId);
-        log.info(chatHistory.toString());
         GPTRequest gptRequest = new GPTRequest(chatHistory);
         gptRequest.addMessage(aiTalkRequest.getMessage());
 

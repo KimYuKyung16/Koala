@@ -50,7 +50,6 @@ public class LectureSessionController {
 			return ResponseEntity.status(HttpStatus.CREATED)
 				.body(Map.of("session_id", session.getSessionId()));
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
-			log.error("Error creating session", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(Map.of("message", "Error creating session"));
 		}
@@ -98,7 +97,6 @@ public class LectureSessionController {
 			return ResponseEntity.status(HttpStatus.CREATED)
 				.body(Map.of("token", connection.getToken(), "lecture_id", lectureId));
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
-			log.error("Error creating connection", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 				.body(Map.of("message", "Error creating connection"));
 		}

@@ -28,9 +28,6 @@ public class CacheServiceImpl implements CacheService {
 			if (chatHistory == null || chatHistory.isEmpty()) {
 				return true;
 			}
-		} else {
-			log.info("chatHistory is empty");
-			System.out.println("비어있으면 안됨");
 		}
 		return false;
 	}
@@ -45,7 +42,6 @@ public class CacheServiceImpl implements CacheService {
 			"당신은 한국어 회화 초보를 돕는 AI 회화 도우미입니다. " + "당신은 " + aiTalkSituation.getPlace() + " 에서 대화 중입니다. " + "상대방은 "
 				+ aiTalkSituation.getUserRole() + "역할입니다. " + "당신은 " + aiTalkSituation.getAiRole() + "역할입니다. "
 				+ "이어서 대답을 해주세요.";
-		log.info("캐시 생성");
 
 		List<Message> initialChatHistory = new ArrayList<>();
 		initialChatHistory.add(new Message("system", defaultPrompt));
@@ -62,7 +58,6 @@ public class CacheServiceImpl implements CacheService {
 	// 기존 채팅 기록에 추가하고, 갱신된 채팅 기록을 캐시에 저장
 	@Override
 	public void addChatHistory(String loginId, Message message) {
-		log.info("메시지를 추가합니다.");
 		Cache cache = cacheManager.getCache("chatHistory");
 		List<Message> chatHistory = cache.get(loginId, List.class);
 		chatHistory.add(message);

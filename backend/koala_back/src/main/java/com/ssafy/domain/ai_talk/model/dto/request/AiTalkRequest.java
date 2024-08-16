@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class AiTalkRequest {
-	@JsonProperty("situation_id")
-	private Long situationId;
+    @JsonProperty("situation_id")
+    private Long situationId;
 
-	private String message;
+    private String message;
 }
