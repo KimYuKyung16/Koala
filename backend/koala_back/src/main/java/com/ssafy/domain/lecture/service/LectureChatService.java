@@ -1,17 +1,9 @@
 package com.ssafy.domain.lecture.service;
 
-import com.ssafy.domain.lecture.chat.LectureChatRoom;
-import com.ssafy.domain.lecture.chat.LectureChatRoomManager;
+import com.ssafy.domain.lecture.model.dto.request.LectureChatRequest;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+public interface LectureChatService {
 
-import org.springframework.stereotype.Service;
+	void sendLectureChat(Long lectureId, LectureChatRequest chat);
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class LectureChatService {
-
-	
 }

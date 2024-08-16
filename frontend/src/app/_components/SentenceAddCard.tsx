@@ -1,16 +1,30 @@
 import SentenceAddBtn from '/public/icons/plus-circle.svg'
+import { useParams } from 'next/navigation'
+import { mutate } from 'swr'
+import { postUserSentence } from '../apis/sentence'
 
 interface SentenceAddCardProps {
   sentence: string
   sentenceId: number
+  handleDeleteuserSentence?: () => void
 }
 
 export default function SentenceAddCard({
   sentence,
-  sentenceId,
+  handleDeleteuserSentence,
 }: SentenceAddCardProps) {
-  const handleAddSeuntence = () => {
-    console.log('문장추가~')
+  const params = useParams()
+  const { lecture_id } = params
+
+  const handleAddSeuntence = async () => {
+    const res = await postUserSentence('/sentences', {
+      sentence_text: sentence,
+    })
+    if (res?.status === 201) {
+      alert('문장이 잘 추가되었습니다')
+      if (handleDeleteuserSentence) handleDeleteuserSentence()
+      mutate(`/lectures/${lecture_id}/sentences`)
+    }
   }
 
   return (

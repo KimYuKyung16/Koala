@@ -27,6 +27,7 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'dictation-field': "url('/images/dictationField.png')",
       },
       colors: {
         'primary-50': '#EEEDFF',
@@ -42,6 +43,17 @@ const config: Config = {
       },
       gridTemplateColumns: {
         '14': 'repeat(14, minmax(80px, 80px))',
+      },
+      animation: {
+        'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+        'fade-in': 'fadeIn 1s ease-in-out forwards',
+        'fly-in': 'flyIn 1s ease-out forwards',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
       },
     },
   },

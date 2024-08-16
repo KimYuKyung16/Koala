@@ -2,33 +2,65 @@
 
 import Play from '/public/icons/play.svg'
 import Pause from '/public/icons/pause.svg'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { SentenceContent } from '@/app/apis/review'
+import { getGoogleSpeech } from '@/app/apis/ttsSententce'
 
-export default function Sentence() {
-  const [isSelected, setSelected] = useState<Boolean>(false)
+interface SentenceProps {
+  sentence: SentenceContent
+  isSelected: boolean
+  isNowPlaying: boolean
+  OnSentenceSelect: (sentence_id: number) => void
+}
+
+export default function ReviewAreaSentence({
+  sentence,
+  isSelected,
+  isNowPlaying,
+  OnSentenceSelect,
+}: SentenceProps) {
   const [isPlaying, setPlaying] = useState<Boolean>(false)
+  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
 
   const handleChangeSelected = () => {
-    setSelected((isSelected) => !isSelected)
+    OnSentenceSelect(sentence.review_sentence_id)
   }
 
-  const handlePlaying = () => {
-    setPlaying((isPlaying) => !isPlaying)
+  const handlePlaying = async () => {
+    if (isPlaying) {
+      if (audioSourceRef.current) {
+        audioSourceRef.current.stop()
+        setPlaying(false)
+      }
+    } else {
+      if (audioContextRef.current === null) {
+        audioContextRef.current = new window.AudioContext()
+      }
+      const arraybuff = await getGoogleSpeech(sentence.sentence_text)
+      const audiobuff = await audioContextRef.current.decodeAudioData(arraybuff)
+      const source = audioContextRef.current.createBufferSource()
+      source.buffer = audiobuff
+      source.connect(audioContextRef.current.destination)
+      source.start()
+      source.onended = () => setPlaying(false)
+      audioSourceRef.current = source
+      setPlaying(true)
+    }
   }
 
   return (
     <div
-      className={`flex items-center w-full min-h-[4rem] max-h-[8rem] rounded-[4.5rem] mb-[0.75rem] px-[1.25rem] ${isSelected ? 'bg-primary-400' : 'bg-gray-200'}`}
+      className={`flex items-center w-full rounded-full px-5 ${isSelected ? 'bg-primary-400' : 'bg-gray-200'}`}
     >
       <p
         onClick={handleChangeSelected}
-        className={`h-full grow pl-[2rem] pr-[1rem] py-[1.25rem] ${isSelected ? 'text-white' : ''}`}
+        className={`h-full grow py-4 ${isSelected ? 'text-white' : ''}`}
       >
-        안녕? 나는 이주형이라고 해 안녕? 나는 이주형이라고 해 안녕? 나는
-        이주형이라고 해
+        {sentence.sentence_text}
       </p>
       <button onClick={handlePlaying}>
-        {isPlaying ? (
+        {isPlaying || isNowPlaying ? (
           <Pause fill={`${isSelected ? 'white' : ''}`} />
         ) : (
           <Play fill={`${isSelected ? 'white' : ''}`} />

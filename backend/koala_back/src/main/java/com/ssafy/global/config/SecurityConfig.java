@@ -2,6 +2,7 @@ package com.ssafy.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
@@ -20,8 +21,10 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+
 	private final JwtTokenProvider jwtTokenProvider;
 	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+	private final CorsConfig corsConfig;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -30,6 +33,8 @@ public class SecurityConfig {
 			.httpBasic(HttpBasicConfigurer::disable)
 			// REST API에서는 보통 CSRF 보호가 필요 X
 			.csrf(CsrfConfigurer::disable)
+			.cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
+			// HTTP 요청에 대한 권한을 설정
 			// JWT를 사용하여 상태를 유지하기 때문에 서버 측 세션이 필요 X
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			// HTTP 요청에 대한 권한을 설정
@@ -43,11 +48,15 @@ public class SecurityConfig {
 				.permitAll()
 				.requestMatchers("/api/users/refresh")
 				.permitAll()
-				.requestMatchers("/api/users")
+				.requestMatchers(HttpMethod.POST, "/api/users")
+				.permitAll()
+				// WebSocket 연결 경로 허용
+				.requestMatchers("/api/lecture-chat/connections")
 				.permitAll()
 				// 다른 모든 요청은 인증을 필요로 함
 				.anyRequest()
 				.authenticated())
+
 			.exceptionHandling(
 				exceptionHandling -> exceptionHandling.authenticationEntryPoint(customAuthenticationEntryPoint))
 			// JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 이전에 실행되도록 추가

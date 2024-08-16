@@ -78,7 +78,7 @@ public class User implements UserDetails {
 
 	@Builder.Default
 	@Column(name = "user_level")
-	private Integer userLevel = 0;
+	private Integer userLevel = 1;
 
 	@Builder.Default
 	@Column(name = "user_created_at")
