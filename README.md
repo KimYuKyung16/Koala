@@ -16,7 +16,7 @@
      <td align="center">
       <img width=100% src="https://github.com/user-attachments/assets/8c4debb6-0c8a-40dd-a1e2-3e21020d1205"/>
       <br/>
-      <sub>받아쓰기</sub>
+      <sub>받아쓰기 & AI 받아쓰기 채점</sub>
     </td>
     <td align="center">
       <img width=100%" src="https://github.com/user-attachments/assets/ba5c8085-c35f-439d-a0ff-55d7d08a924a"/>
@@ -28,12 +28,12 @@
     <td align="center">
       <img width=100% src="https://github.com/user-attachments/assets/16af3694-1af4-467a-b38a-ce1a0f5d0b91"/>
       <br/>
-      <sub>화상수업</sub>
+      <sub>한국인 선생님과의 화상수업</sub>
     </td>
     <td align="center">
       <img width=100%" src="https://github.com/user-attachments/assets/52352ebb-c660-4499-a20d-ef3d82b3f1b4"/>
       <br/>
-      <sub>AI회화</sub>
+      <sub>AI 한국어 회화 연습</sub>
     </td>
   </tr>
  <tr>
